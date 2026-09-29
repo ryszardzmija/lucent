@@ -1,4 +1,4 @@
-#include "color_buffer.h"
+#include <lucent/color_buffer.h>
 
 #include <cassert>
 #include <utility>

@@ -1,3 +1,4 @@
+# SDL
 set(SDL_TEST_LIBRARY OFF CACHE BOOL "Disable building SDL test library" FORCE)
 set(SDL_TESTS OFF CACHE BOOL "Disable SDL tests" FORCE)
 
@@ -15,5 +16,11 @@ set(SDL_TRAY OFF CACHE BOOL "Disable SDL tray subsystem" FORCE)
 
 add_subdirectory(SDL)
 
-add_library(${PROJECT_NAME}_platform INTERFACE)
-target_link_libraries(${PROJECT_NAME}_platform INTERFACE SDL3::SDL3)
+add_library(${PROJECT_NAME}_platform_deps INTERFACE)
+target_link_libraries(${PROJECT_NAME}_platform_deps INTERFACE SDL3::SDL3)
+
+# GTest
+add_subdirectory(googletest)
+
+add_library(${PROJECT_NAME}_testing_deps INTERFACE)
+target_link_libraries(${PROJECT_NAME}_testing_deps INTERFACE GTest::gtest_main)
