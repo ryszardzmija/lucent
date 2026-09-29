@@ -15,5 +15,5 @@ set(SDL_TRAY OFF CACHE BOOL "Disable SDL tray subsystem" FORCE)
 
 add_subdirectory(SDL)
 
-add_library(renderer_platform INTERFACE)
-target_link_libraries(renderer_platform INTERFACE SDL3::SDL3)
+add_library(${PROJECT_NAME}_platform INTERFACE)
+target_link_libraries(${PROJECT_NAME}_platform INTERFACE SDL3::SDL3)
