@@ -1,45 +1,55 @@
-#include <cstdlib>
-#include <cstdint>
-
 #include <SDL3/SDL.h>
 
-void fillSurfaceBrightPastelBlue(void* buf, int size) {
-    constexpr uint8_t bright_pastel_blue_blue = 237;
-    constexpr uint8_t bright_pastel_blue_red = 155;
-    constexpr uint8_t bright_pastel_blue_green = 184;
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
-    const auto byte_buf_ptr = static_cast<uint8_t*>(buf);
+#include "color_buffer.h"
 
-    for (int i = 0; i < size; i++) {
-        uint8_t* red = byte_buf_ptr + i * 3;
-        uint8_t* green = byte_buf_ptr + i * 3 + 1;
-        uint8_t* blue = byte_buf_ptr + i * 3 + 2;
+namespace {
 
-        *red = bright_pastel_blue_red;
-        *green = bright_pastel_blue_green;
-        *blue = bright_pastel_blue_blue;
+void fillColorBufferBrightPastelBlue(std::uint8_t* buf, std::size_t size) {
+    constexpr std::uint8_t bright_pastel_blue_blue = 237;
+    constexpr std::uint8_t bright_pastel_blue_red = 155;
+    constexpr std::uint8_t bright_pastel_blue_green = 184;
+    constexpr std::uint8_t bright_pastel_blue_alpha = 255;
+
+    for (std::size_t i = 0; i < size; i += 4) {
+        *(buf + i) = bright_pastel_blue_red;
+        *(buf + i + 1) = bright_pastel_blue_green;
+        *(buf + i + 2) = bright_pastel_blue_blue;
+        *(buf + i + 3) = bright_pastel_blue_alpha;
     }
 }
 
+}  // namespace
+
 int main() {
+    constexpr int window_width = 640;
+    constexpr int window_height = 480;
+
+    lucent::ColorBuffer color_buffer(window_width, window_height, lucent::PixelFormat::RGBA32);
+
+    fillColorBufferBrightPastelBlue(color_buffer.data(), color_buffer.size());
+
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("%s", "SDL initialization failed");
         return EXIT_FAILURE;
     }
 
-    constexpr int window_width = 640;
-    constexpr int window_height = 480;
-
     SDL_Window* window = nullptr;
-    if (window = SDL_CreateWindow("Render Window", window_width, window_height, SDL_WINDOW_RESIZABLE); !window) {
+    if (window =
+            SDL_CreateWindow("Render Window", window_width, window_height, SDL_WINDOW_RESIZABLE);
+        !window) {
         SDL_Log("%s: %s", "SDL window creation failed", SDL_GetError());
         SDL_Quit();
         return EXIT_FAILURE;
     }
 
-
     SDL_Surface* draw_surface = nullptr;
-    if (draw_surface = SDL_CreateSurface(window_width, window_height, SDL_PIXELFORMAT_RGB24); !draw_surface) {
+    if (draw_surface = SDL_CreateSurface(window_width, window_height, SDL_PIXELFORMAT_RGBA32);
+        !draw_surface) {
         SDL_Log("%s: %s", "SDL draw surface creation failed", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_Quit();
@@ -54,7 +64,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    fillSurfaceBrightPastelBlue(draw_surface->pixels, draw_surface->w * draw_surface->h);
+    std::memcpy(draw_surface->pixels, color_buffer.data(), color_buffer.size());
 
     SDL_BlitSurface(draw_surface, nullptr, window_surface, nullptr);
 
