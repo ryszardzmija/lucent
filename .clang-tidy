@@ -1,0 +1,12 @@
+Checks:
+  - '-*'
+  - 'clang-analyzer-*'
+  - 'bugprone-*'
+  - 'performance-*'
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*'
+SystemHeaders: false
+
+FormatStyle: file
